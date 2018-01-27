@@ -7,6 +7,22 @@ class Vnode {
   }
 }
 
+class Component{
+    constructor(props){
+        this.props=props;
+        this.state=this.state||{};
+        this.nextState = null;
+    }
+
+    setState(nextState){
+
+    }
+
+    render(){
+
+    }
+}
+
 function createElement(type, config, ...children) {
     if(!type) return;
     let props={},key,ref;
@@ -30,5 +46,6 @@ function createElement(type, config, ...children) {
 }
 
 export const React={
-    createElement
+    createElement,
+    Component
 };

@@ -4,11 +4,14 @@ function render(vnode, container) {
   let domNode;
   if (typeof type == "string") {
     domNode = document.createElement(type);
-    mapPropsToDom(props, domNode);
+  } else if(typeof type == "function"){
+    domNode = renderComponent(vnode,container);
   }
+  mapPropsToDom(props, domNode);
   let { children } = props;
   mountChild(children, domNode);
   container.appendChild(domNode);
+  return domNode
 }
 
 function mapPropsToDom(props, dom) {
@@ -28,6 +31,7 @@ function mapPropsToDom(props, dom) {
 }
 
 function mountChild(children, domNode) {
+  if(!children) return
   if(Array.isArray(children)){
     children.forEach((child)=>{
         render(child,domNode);
@@ -35,7 +39,14 @@ function mountChild(children, domNode) {
   } else {
     render(children, domNode);
   }
- 
+}
+
+function renderComponent(vnode,container){
+    if(!vnode) return;
+    let {type,props} = vnode;
+    let component = new type(props).render();
+    let dom = render(component,container);
+    return dom;
 }
 
 export const ReactDOM = {
