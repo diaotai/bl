@@ -45,7 +45,9 @@ class FuckApp extends React.Component {
             background: this.state.color
           }}
           className="I am FuckApp component"
-        />
+        >
+        3245
+        </div>
       </div>
     );
   }

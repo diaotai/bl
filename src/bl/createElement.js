@@ -1,4 +1,4 @@
-import { ReactDOM } from "./render";
+import { mapPropsToDom } from "./render";
 
 class Vnode {
   constructor(type, props, key, ref) {
@@ -34,7 +34,7 @@ function updateComponent(instance, oldVnode, newVnode) {
  // console.log(ReactDOM.mapPropsToDom)
   if (oldVnode.type === newVnode.type) {
   //  console.log(oldVnode._hostNode, newVnode.props)
-   ReactDOM.mapPropsToDom(oldVnode._hostNode, newVnode.props); //更新节点
+  mapPropsToDom(oldVnode._hostNode, newVnode.props); //更新节点
   // oldVnode._hostNode.style.background = "yellow"
   } else {
     //remove
@@ -42,6 +42,7 @@ function updateComponent(instance, oldVnode, newVnode) {
 }
 
 export function createElement(type, config, ...children) {
+  console.log(config,"type!!!",type)
   if (!type) return;
   let props = {},
     key,
