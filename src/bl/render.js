@@ -1,4 +1,4 @@
-function render(vnode, container) {
+export function render(vnode, container) {
   if (!vnode) return;
   let { props, type } = vnode;
   let domNode;
@@ -8,6 +8,7 @@ function render(vnode, container) {
    //   console.log("compon",vnode)
     domNode = renderComponent(vnode,container);
   }
+  console.log("render",vnode)
   mapPropsToDom(domNode,props);
   let { children } = props;
   mountChild(children, domNode);
@@ -21,6 +22,7 @@ function mapPropsToDom(dom, props) {
     if ( i == "children") {
       continue;
     }
+ 
     if (i == "style") {
       let style = props.style;
       Object.keys(style).forEach(key => {
@@ -29,6 +31,9 @@ function mapPropsToDom(dom, props) {
       continue;
     }
     dom[i] = props[i]
+    // if(i=="className"){
+    //   console.log(dom,"className!!!!",dom[i])
+    // }
   }
 }
 

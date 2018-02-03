@@ -9,7 +9,7 @@ class Vnode {
   }
 }
 
-class Component {
+export class Component {
   constructor(props) {
     this.props = props;
     this.state = this.state || {};
@@ -41,7 +41,7 @@ function updateComponent(instance, oldVnode, newVnode) {
   }
 }
 
-function createElement(type, config, ...children) {
+export function createElement(type, config, ...children) {
   if (!type) return;
   let props = {},
     key,
@@ -64,7 +64,4 @@ function createElement(type, config, ...children) {
   return new Vnode(type, props, key, ref);
 }
 
-export const React = {
-  createElement,
-  Component
-};
+

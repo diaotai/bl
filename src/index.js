@@ -1,7 +1,6 @@
-import { React } from "./createElement";
-import { ReactDOM } from "./render";
+import  React  from "./bl";
+import  ReactDOM  from "./bl";
 import "./test.css";
-import { setTimeout } from "timers";
 
 class FuckApp extends React.Component {
   constructor(props) {
@@ -35,11 +34,6 @@ class FuckApp extends React.Component {
         this.setState({clas:"world"})
     },5000)
   }
-//   click(e) {
-//     this.setState({
-//       clas:this.state.clas=="hello"?"world":"hello"
-//     })
-//   }
 
   render() {
     return (
