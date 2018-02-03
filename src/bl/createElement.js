@@ -1,4 +1,5 @@
-import { mapPropsToDom } from "./render";
+import { mapPropsToDom, update } from "./render";
+import { testType } from "./utils";
 
 class Vnode {
   constructor(type, props, key, ref) {
@@ -30,19 +31,11 @@ export class Component {
 }
 
 function updateComponent(instance, oldVnode, newVnode) {
-   // console.log(oldVnode,"!!!",newVnode)
- // console.log(ReactDOM.mapPropsToDom)
-  if (oldVnode.type === newVnode.type) {
-  //  console.log(oldVnode._hostNode, newVnode.props)
-  mapPropsToDom(oldVnode._hostNode, newVnode.props); //更新节点
-  // oldVnode._hostNode.style.background = "yellow"
-  } else {
-    //remove
-  }
+  update(oldVnode, newVnode);
 }
 
 export function createElement(type, config, ...children) {
-  console.log(config,"type!!!",type)
+  //console.log(config,"type!!!",type)
   if (!type) return;
   let props = {},
     key,
@@ -65,4 +58,44 @@ export function createElement(type, config, ...children) {
   return new Vnode(type, props, key, ref);
 }
 
-
+//利用递归将所有文字节点转化为Vnode
+export function flattenChildren(children) {
+  if (!Array.isArray(children)) {
+    if (children === undefined) {
+      return new Vnode("#text", "", null, null);
+    } else if (testType(children) == 3 || testType(children) == 4) {
+      return new Vnode("#text", children, null, null);
+    }
+    return children;
+  }
+  let isLastString = false;
+  let content = "";
+  let target = [];
+  for (let i = 0; i < children.length; i++) {
+    let child = children[i];
+    let type = testType(child);
+    if (type == 3 || type == 4) {
+      content += child;
+      isLastString = true;
+    } else {
+      if (isLastString) {
+        isLastString = false;
+        target.push(content);
+        content = "";
+      }
+      if (type == 7) {
+        child.forEach(val => {
+          target.push(val);
+        });
+      } else {
+        target.push(child);
+      }
+    }
+    if(i==children.length-1){
+      target.push(content)
+    }
+  }
+  return target.map(item => {
+    return flattenChildren(item);
+  });
+}
