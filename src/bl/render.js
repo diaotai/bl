@@ -41,16 +41,24 @@ function renderComponent(vnode, container) {
   return dom;
 }
 
-function updateChildren(oldChild, newChild, parentDOMNode) {}
+function updateChildren(oldChild, newChild, parentDOMNode) {
+  update(oldChild,newChild,parentDOMNode)
+}
 
 export function update(oldVnode, newVnode, parentDOMNode) {
+  if(!oldVnode||!newVnode) return;
   newVnode._hostNode = oldVnode._hostNode;
+  let oldProps= oldVnode.props;
+  let newProps = newVnode.props;
   if (newVnode.type == oldVnode.type) {
     //更新组件
     if (typeof newVnode.type == "function") {
       //todo 更新组件
     } else if (typeof newVnode.type == "string") {
       mapPropsToDom(oldVnode._hostNode, newVnode.props);
+      if (oldProps&&newProps) {
+       updateChildren(oldProps.children,newProps.children,newVnode._hostNode);
+      }
     } else if (newVnode.type == "#text") {
       //todo 更新文字节点
     }
@@ -64,19 +72,19 @@ export function render(vnode, container) {
   if (!vnode) return;
   let { props, type } = vnode;
   let domNode;
-  if(type == "#text"){
-    domNode = document.createTextNode(props)
+  if (type == "#text") {
+    domNode = document.createTextNode(props);
   } else if (typeof type == "string") {
     domNode = document.createElement(type);
   } else if (typeof type == "function") {
     domNode = renderComponent(vnode, container);
-  } 
-  if(props&&testType(props)!=4){
+  }
+  if (props && testType(props) != 4) {
     mapPropsToDom(domNode, props);
     let { children } = props;
-  //  console.log("@@@@",children)
+    //  console.log("@@@@",children)
     children = flattenChildren(children);
-  //  console.log("!!!!!",children)
+    //  console.log("!!!!!",children)
     mountChild(children, domNode);
   }
 
