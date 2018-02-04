@@ -12,3 +12,8 @@ export function testType(value){
     }
     return typeMap[Object.prototype.toString.call(value)]||8;
 }
+
+export function toArray(value){
+    if(!Array.isArray(value)) return [value]
+    else return value
+}

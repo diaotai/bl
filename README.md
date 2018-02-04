@@ -4,7 +4,7 @@
 #todo
 -------
 - [√] 字符数字节点的加载
-- []  children的刷新
+- [√] children的刷新
 - []  differ算法
 - []  实现生命周期
 - []  实现setState异步机制

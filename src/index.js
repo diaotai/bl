@@ -7,7 +7,8 @@ class FuckApp extends React.Component {
     super(props);
     this.state = {
       color: "red",
-      clas:"hello"
+      clas:"hello",
+      text:"hello"
     };
     setInterval(
       function() {
@@ -31,7 +32,7 @@ class FuckApp extends React.Component {
       1000
     );
     setTimeout(()=>{
-        this.setState({clas:"world"})
+        this.setState({clas:"world",text:"world"})
     },5000)
   }
 
@@ -46,7 +47,7 @@ class FuckApp extends React.Component {
           }}
           className="I am FuckApp component"
         >
-        3245
+        {this.state.text}
         </div>
       </div>
     );
