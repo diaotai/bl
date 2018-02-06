@@ -24,14 +24,14 @@ export class Component {
     let oldNode = this.Vnode;
     let newNode = this.render();
     //     console.log("newNode",newNode)
-    updateComponent(this, oldNode, newNode);
+   updateComponent(this, oldNode, newNode);
   }
 
   render() {}
 }
 
 function updateComponent(instance, oldVnode, newVnode) {
-  update(oldVnode, newVnode);
+  instance.Vnode =update(oldVnode, newVnode);
 }
 
 export function createElement(type, config, ...children) {

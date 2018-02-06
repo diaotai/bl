@@ -34,6 +34,10 @@ class FuckApp extends React.Component {
     setTimeout(()=>{
         this.setState({clas:"world",text:"world"})
     },5000)
+    setTimeout(()=>{
+      this.setState({text:"hello"})  
+      console.log("hello")
+  },10000)
   }
 
   render() {
