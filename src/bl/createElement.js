@@ -1,4 +1,4 @@
-import { mapPropsToDom, update } from "./render";
+import { update } from "./render";
 import { testType } from "./utils";
 
 class Vnode {

@@ -26,9 +26,7 @@ function updateChildren(oldChild, newChild, parentDOMNode) {
   for(let i=0;i<length;i++){
     let oldVnode = oldChild[i];
     let newVnode = newChild[i];
-    // console.log(oldChild,newChild,i)
-    // console.log(testType(oldChild),testType(newChild))
-    if((testType(oldVnode)==3||testType(oldVnode)==4)&&testType(newVnode)==testType(oldVnode)){
+    if(oldVnode.type=="#text"||newVnode.type=="#text"){
       updateTextComponent(oldVnode,newVnode,parentDOMNode)
     } else {
       update(oldVnode, newVnode, parentDOMNode);
@@ -39,8 +37,8 @@ function updateChildren(oldChild, newChild, parentDOMNode) {
 
 function updateTextComponent(oldChild,newChild,parentDOMNode){
   //console.log(oldChild,"@@#$@#$",newChild)
-  if(oldChild!==newChild){
-    parentDOMNode.firstChild.nodeValue = newChild;
+  if(oldChild.props!==newChild.props){
+    parentDOMNode.firstChild.nodeValue = newChild.props;
   }
 }
 
@@ -83,7 +81,7 @@ function renderComponent(vnode, container) {
   return dom;
 }
 
-function rednerTextComponent(vnode,container){
+function renderTextComponent(vnode,container){
   let domNode = document.createTextNode(vnode.props);
   vnode._hostNode = domNode;
   container.appendChild(domNode);
@@ -91,26 +89,26 @@ function rednerTextComponent(vnode,container){
 }
 
 function mountChild(children, domNode) {
-  if (!children) return;
   children = flattenChildren(children)
-  let type = testType(children);
+  
   if (Array.isArray(children)) {
     children.forEach(child => {
       render(child, domNode);
     });
   } else {
-    if(type==3||type==4){
-      rednerTextComponent(children,domNode)
+    if(children.type=="#text"){
+      renderTextComponent(children,domNode)
     } else {
       render(children, domNode);
     }
-    
   }
+  return children;
 }
 
 export function render(vnode, container) {
   if (!vnode) return;
   let { props, type } = vnode;
+  let {children,className,style} = props;
   let domNode;
   if (type == "#text") {
     domNode = document.createTextNode(props);
@@ -119,13 +117,19 @@ export function render(vnode, container) {
   } else if (typeof type == "function") {
     domNode = renderComponent(vnode, container);
   }
-  if (props && testType(props) != 4) {
-    mapPropsToDom(domNode, props);
-    let { children } = props;
-    mountChild(children, domNode);
+  if(children){
+    vnode.props.children = mountChild(children,domNode);
   }
+  if(className){
+    domNode.className = className;
+  }
+  if(style){
+    Object.keys(style).forEach((key)=>{
+      domNode.style[key]=style[key]
+    })
+  }
+  
 
-  //console.log(vnode)
   vnode._hostNode = domNode;
   container.appendChild(domNode);
   return domNode;
