@@ -21,6 +21,7 @@ export function mapPropsToDom(dom, props) {
 
 function updateChildren(oldChild, newChild, parentDOMNode) {
   oldChild = toArray(oldChild);
+  newChild = flattenChildren(newChild);
   newChild = toArray(newChild);
   let length = Math.min(oldChild.length,newChild.length);
   for(let i=0;i<length;i++){
@@ -52,6 +53,7 @@ export function update(oldVnode, newVnode, parentDOMNode) {
     if (typeof newVnode.type == "function") {
       //todo 更新组件
     } else if (typeof newVnode.type == "string") {
+      console.log(oldVnode,"!!!",newVnode)
       mapPropsToDom(oldVnode._hostNode, newVnode.props);
       if (oldProps && newProps) {
         updateChildren(
@@ -88,24 +90,24 @@ function renderTextComponent(vnode,container){
   return domNode;
 }
 
-function mountChild(children, domNode) {
+function mountChild(children, domNode,update) {
   children = flattenChildren(children)
   
   if (Array.isArray(children)) {
     children.forEach(child => {
-      render(child, domNode);
+      render(child, domNode,update);
     });
   } else {
     if(children.type=="#text"){
       renderTextComponent(children,domNode)
     } else {
-      render(children, domNode);
+      render(children, domNode,update);
     }
   }
   return children;
 }
 
-export function render(vnode, container) {
+export function render(vnode, container,update) {
   if (!vnode) return;
   let { props, type } = vnode;
   let {children,className,style} = props;
@@ -128,9 +130,9 @@ export function render(vnode, container) {
       domNode.style[key]=style[key]
     })
   }
-  
-
   vnode._hostNode = domNode;
-  container.appendChild(domNode);
+  if(!update){
+    container.appendChild(domNode);
+  }
   return domNode;
 }
