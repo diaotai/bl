@@ -28,31 +28,94 @@ function createKeyToOldIdIndex(oldChild) {
   return map;
 }
 
-function isSameVnode(oldVnode,newVnode){
-  return oldVnode.type==newVnode.type&&oldVnode.key==newVnode.key
+function isSameVnode(oldVnode, newVnode) {
+  return oldVnode.type == newVnode.type && oldVnode.key == newVnode.key;
 }
 
 function updateChildren(oldChild, newChild, parentDOMNode) {
-  oldChild = toArray(oldChild);
   newChild = flattenChildren(newChild);
+  oldChild = toArray(oldChild);
   newChild = toArray(newChild);
-  let length = Math.min(oldChild.length, newChild.length);
-  for (let i = 0; i < length; i++) {
-    let oldVnode = oldChild[i];
-    let newVnode = newChild[i];
-    if (oldVnode.type == "#text" || newVnode.type == "#text") {
-      updateTextComponent(oldVnode, newVnode, parentDOMNode);
+  let oldLength = oldChild.length,
+    newLength = newChild.length,
+    oldStartIndex = 0,
+    newStartIndex = 0,
+    oldEndIndex = oldLength - 1,
+    newEndIndex = newLength - 1,
+    oldStartVnode = oldChild[0],
+    newStartVnode = newChild[0],
+    oldEndVnode = oldChild[oldEndIndex],
+    newEndVnode = newChild[newEndIndex],
+    hasCode;
+  while (oldStartIndex <= oldEndIndex && newStartIndex <= newEndIndex) {
+    console.log("start");
+    if (oldStartVnode == undefined) {
+      oldStartVnode = oldChild[++oldStartIndex];
+    } else if (oldEndVnode == undefined) {
+      oldEndVnode = oldChild[--oldEndIndex];
+    } else if (isSameVnode(oldStartVnode, newStartVnode)) {
+      update(oldStartVnode, newStartVnode, parentDOMNode);
+      oldStartVnode = oldChild[++oldStartIndex];
+      newStartVnode = newChild[++newStartIndex];
+    } else if (isSameVnode(OldEndVnode, newEndVnode)) {
+      update(OldEndVnode, newEndVnode, parentDOMNode);
+      oldEndVnode = oldChild[--oldEndIndex];
+      newEndVnode = newChild[--newEndIndex];
+    } else if (isSameVnode(oldStartVnode, newEndVnode)) {
+      let domNode = oldStartVnode._hostNode;
+      parentDOMNode.insertBefore(domNode, oldEndVnode.nextSibling);
+      update(oldStartVnode, newEndVnode, parentDOMNode);
+      oldStartVnode = oldChild[++oldStartIndex];
+      newEndVnode = newChild[--newEndIndex];
+    } else if (isSameVnode(oldEndVnode, newStartVnode)) {
+      let domNode = oldEndVnode._hostNode;
+      parentDOMNode.insertBefore(domNode, oldStartVnode);
+      update(oldEndVnode, newStartVnode, parentDOMNode);
+      oldEndVnode = oldChild[--oldEndIndex];
+      newStartVnode = newChild[++newStartIndex];
     } else {
-      update(oldVnode, newVnode, parentDOMNode);
+      if (hasCode == undefined) {
+        hasCode = createKeyToOldIdIndex(oldChild);
+      }
+      let key = newStartVnode.key;
+      let oldVnodeIndex = hasCode[key];
+      if (oldVnodeIndex !== undefined) {
+        let moveVnode = oldChild[oldVnodeIndex];
+        update(moveVnode, newStartVnode, parentDOMNode);
+        parentDOMNode.insertBefore(
+          moveVnode._hostNode,
+          newStartVnode._hostNode
+        );
+        oldChild[oldVnodeIndex] = undefined;
+        newStartVnode = newChild[++newStartIndex];
+      } else {
+        let newDOM = render(newStartVnode, parentDOMNode, true);
+        parentDOMNode.insertBefore(newDOM, oldStartVnode._hostNode);
+        newStartVnode = newChild[++newStartIndex];
+      }
+    }
+    if (oldStartIndex > oldEndIndex) {
+      for (; newStartIndex < newEndIndex; newStartIndex++) {
+        if (newChild[newStartIndex]) {
+          render(newChild[newStartIndex], parentDOMNode);
+        }
+      }
+    } else if (newStartIndex > newEndIndex) {
+      for (; oldStartIndex < oldEndIndex; oldStartIndex++) {
+        if (oldChild[oldStartIndex]) {
+          parentDOMNode.removeChild(oldChild[oldStartIndex]);
+        }
+      }
     }
   }
+
   return newChild;
 }
 
-function updateTextComponent(oldChild, newChild, parentDOMNode) {
+function updateTextComponent(oldVnode, newVnode, parentDOMNode) {
   //console.log(oldChild,"@@#$@#$",newChild)
-  if (oldChild.props !== newChild.props) {
-    parentDOMNode.firstChild.nodeValue = newChild.props;
+  if (oldVnode.props !== newVnode.props) {
+    parentDOMNode.firstChild.nodeValue = newVnode.props;
   }
 }
 
@@ -65,17 +128,15 @@ export function update(oldVnode, newVnode, parentDOMNode) {
     //更新组件
     if (typeof newVnode.type == "function") {
       //todo 更新组件
-    } else if (typeof newVnode.type == "string") {
-    
-        newVnode.props.children=updateChildren(
-          oldProps.children,
-          newProps.children,
-          newVnode._hostNode
-        );
-        mapPropsToDom(oldVnode._hostNode, newVnode.props);
-      
     } else if (newVnode.type == "#text") {
-      //todo 更新文字节点
+      updateTextComponent(oldVnode, newVnode, parentDOMNode);
+    } else if (typeof newVnode.type == "string") {
+      newVnode.props.children = updateChildren(
+        oldProps.children,
+        newProps.children,
+        newVnode._hostNode
+      );
+      mapPropsToDom(oldVnode._hostNode, newVnode.props);
     }
   } else {
     parentDOMNode.removeChild(oldVnode._hostNode);
