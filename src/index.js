@@ -37,7 +37,8 @@ class FuckApp extends React.Component {
     setTimeout(()=>{
       this.setState({text:"hello"})  
       console.log("hello")
-  },10000)
+  },10000);
+
   }
 
   render() {
@@ -51,11 +52,14 @@ class FuckApp extends React.Component {
           }}
           className="I am FuckApp component"
         >
-        {this.state.text}
+        {this.props.hello}
         </div>
       </div>
     );
   }
+}
+FuckApp.defaultProps={
+  hello:"hello"
 }
 
 let root = document.createElement("div");

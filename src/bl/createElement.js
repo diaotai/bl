@@ -16,15 +16,14 @@ export class Component {
     this.state = this.state || {};
     this.nextState = null;
   }
-  shouldComponentUpdate(){}
-  componentWillReceiveProps(){}
-  componentWillUpdate(){}
-  componentDidUpdate(){}
-  componentWillMount(){}
-  componentDidMount(){}
-  componentWillUnmount(){}
-  componentDidUnmount(){}
-
+  shouldComponentUpdate() {}
+  componentWillReceiveProps() {}
+  componentWillUpdate() {}
+  componentDidUpdate() {}
+  componentWillMount() {}
+  componentDidMount() {}
+  componentWillUnmount() {}
+  componentDidUnmount() {}
 
   setState(nextState) {
     const preState = this.state;
@@ -33,14 +32,14 @@ export class Component {
     let oldNode = this.Vnode;
     let newNode = this.render();
     //     console.log("newNode",newNode)
-   updateComponent(this, oldNode, newNode);
+    updateComponent(this, oldNode, newNode);
   }
 
   render() {}
 }
 
 function updateComponent(instance, oldVnode, newVnode) {
-  instance.Vnode =update(oldVnode, newVnode);
+  instance.Vnode = update(oldVnode, newVnode);
 }
 
 export function createElement(type, config, ...children) {
@@ -63,6 +62,15 @@ export function createElement(type, config, ...children) {
     props.children = children[0];
   } else if (children.length > 1) {
     props.children = children;
+  }
+  //对于组件进行defaultProps处理
+  let defaultProps = type.defaultProps;
+  if (defaultProps) {
+    Object.keys(defaultProps).forEach(key => {
+      if (props[key] == undefined) {
+        props[key] = defaultProps[key];
+      }
+    });
   }
   return new Vnode(type, props, key, ref);
 }
@@ -100,8 +108,8 @@ export function flattenChildren(children) {
         target.push(child);
       }
     }
-    if(i==children.length-1){
-      target.push(content)
+    if (i == children.length - 1) {
+      target.push(content);
     }
   }
   return target.map(item => {
