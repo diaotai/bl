@@ -6,7 +6,7 @@
 - [√] 字符数字节点的加载
 - [√] children的刷新
 - [√]  differ算法
-- []  实现react事件机制
+- [√]  实现react事件机制
 - []  实现生命周期
 - []  实现setState异步机制
 - []  对接redux
