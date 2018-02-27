@@ -16,6 +16,15 @@ export class Component {
     this.state = this.state || {};
     this.nextState = null;
   }
+  shouldComponentUpdate(){}
+  componentWillReceiveProps(){}
+  componentWillUpdate(){}
+  componentDidUpdate(){}
+  componentWillMount(){}
+  componentDidMount(){}
+  componentWillUnmount(){}
+  componentDidUnmount(){}
+
 
   setState(nextState) {
     const preState = this.state;

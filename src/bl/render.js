@@ -48,7 +48,7 @@ function updateChildren(oldChild, newChild, parentDOMNode) {
     newEndVnode = newChild[newEndIndex],
     hasCode;
   while (oldStartIndex <= oldEndIndex && newStartIndex <= newEndIndex) {
-    console.log("start");
+   // console.log("start");
     if (oldStartVnode == undefined) {
       oldStartVnode = oldChild[++oldStartIndex];
     } else if (oldEndVnode == undefined) {
@@ -113,7 +113,6 @@ function updateChildren(oldChild, newChild, parentDOMNode) {
 }
 
 function updateTextComponent(oldVnode, newVnode, parentDOMNode) {
-  //console.log(oldChild,"@@#$@#$",newChild)
   if (oldVnode.props !== newVnode.props) {
     parentDOMNode.firstChild.nodeValue = newVnode.props;
   }
