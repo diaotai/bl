@@ -17,3 +17,11 @@ export function toArray(value){
     if(!Array.isArray(value)) return [value]
     else return value
 }
+
+export function isEventName(eventName){
+    return /^on[A-Z]/.test(eventName);
+}
+
+export function isLowerEventName(eventName){
+   return /^on[a-z]/.test(eventName);
+}

@@ -43,7 +43,7 @@ class FuckApp extends React.Component {
 
   render() {
     return (
-      <div className={this.state.clas} >
+      <div className={this.state.clas} onClick={(e)=>{console.log("hhhhhh")}}>
         <div
           style={{
             height: "100px",

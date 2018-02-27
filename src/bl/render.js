@@ -1,5 +1,6 @@
 import { testType, toArray } from "./utils";
 import { flattenChildren } from "./createElement";
+import { mapProps } from "./mapProps";
 
 function mapPropsToDom(dom, props) {
   for (let i in props) {
@@ -135,7 +136,7 @@ export function update(oldVnode, newVnode, parentDOMNode) {
         newProps.children,
         newVnode._hostNode
       );
-      mapPropsToDom(oldVnode._hostNode, newVnode.props);
+      //  mapProps(oldVnode._hostNode, newVnode.props);
     }
   } else {
     parentDOMNode.removeChild(oldVnode._hostNode);
@@ -194,14 +195,7 @@ export function render(vnode, container, update) {
   if (children) {
     vnode.props.children = mountChild(children, domNode);
   }
-  if (className) {
-    domNode.className = className;
-  }
-  if (style) {
-    Object.keys(style).forEach(key => {
-      domNode.style[key] = style[key];
-    });
-  }
+  mapProps(domNode,props)
   vnode._hostNode = domNode;
   if (!update) {
     container.appendChild(domNode);
