@@ -3,8 +3,8 @@ import { flattenChildren } from "./createElement";
 import { mapProps } from "./mapProps";
 
 let mountIndex = 0;
-function mountIndexAdd(){
-    return mountIndex++;
+function mountIndexAdd() {
+  return mountIndex++;
 }
 
 function createKeyToOldIdIndex(oldChild) {
@@ -108,17 +108,16 @@ function updateTextComponent(oldVnode, newVnode, parentDOMNode) {
 }
 
 function updateNativeComponent(oldVnode, newVnode, parentDOMNode) {
-  let oldStyle = oldVnode.props.style||{};
-  let newStyle = newVnode.props.style||{};
-  Object.keys(newStyle).forEach((key)=>{
+  let oldStyle = oldVnode.props.style || {};
+  let newStyle = newVnode.props.style || {};
+  Object.keys(newStyle).forEach(key => {
     oldVnode._hostNode.style[key] = newStyle[key];
-  })
-  Object.keys(oldStyle).forEach((key)=>{
-    if(!key in newStyle){
-      oldVnode._hostNode.style[key]="";
-    } 
-  })
-  
+  });
+  Object.keys(oldStyle).forEach(key => {
+    if (!key in newStyle) {
+      oldVnode._hostNode.style[key] = "";
+    }
+  });
 }
 
 export function update(oldVnode, newVnode, parentDOMNode) {
@@ -140,14 +139,14 @@ export function update(oldVnode, newVnode, parentDOMNode) {
         newProps.children,
         newVnode._hostNode
       );
-      updateNativeComponent(oldVnode,newVnode)
+      updateNativeComponent(oldVnode, newVnode);
       //   mapProps(oldVnode._hostNode, newVnode.props);
     }
   } else {
-    let newDOMNode = render(newVnode, parentDOMNode,true);
+    let newDOMNode = render(newVnode, parentDOMNode, true);
     //如果只是更新
-    if(newVnode._hostNode){
-      parentDOMNode.insertBefore(newDOMNode,oldVnode._hostNode)
+    if (newVnode._hostNode) {
+      parentDOMNode.insertBefore(newDOMNode, oldVnode._hostNode);
       parentDOMNode.removeChild(oldVnode._hostNode);
     } else {
       //若新有旧无，则直接添加
@@ -183,7 +182,7 @@ function mountChild(children, domNode, update) {
     });
   } else {
     if (children.type == "#text") {
-      renderTextComponent(children, domNode,update);
+      renderTextComponent(children, domNode, update);
     } else {
       render(children, domNode, update);
     }
