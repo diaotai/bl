@@ -2,21 +2,9 @@ import { testType, toArray } from "./utils";
 import { flattenChildren } from "./createElement";
 import { mapProps } from "./mapProps";
 
-function mapPropsToDom(dom, props) {
-  for (let i in props) {
-    if (i == "children") {
-      continue;
-    }
-
-    if (i == "style") {
-      let style = props.style;
-      Object.keys(style).forEach(key => {
-        dom.style[key] = style[key];
-      });
-      continue;
-    }
-    dom[i] = props[i];
-  }
+let mountIndex = 0;
+function mountIndexAdd(){
+    return mountIndex++;
 }
 
 function createKeyToOldIdIndex(oldChild) {
@@ -49,7 +37,7 @@ function updateChildren(oldChild, newChild, parentDOMNode) {
     newEndVnode = newChild[newEndIndex],
     hasCode;
   while (oldStartIndex <= oldEndIndex && newStartIndex <= newEndIndex) {
-   // console.log("start");
+    // console.log("start");
     if (oldStartVnode == undefined) {
       oldStartVnode = oldChild[++oldStartIndex];
     } else if (oldEndVnode == undefined) {
@@ -96,13 +84,13 @@ function updateChildren(oldChild, newChild, parentDOMNode) {
       }
     }
     if (oldStartIndex > oldEndIndex) {
-      for (; newStartIndex < newEndIndex; newStartIndex++) {
+      for (; newStartIndex <= newEndIndex; newStartIndex++) {
         if (newChild[newStartIndex]) {
           render(newChild[newStartIndex], parentDOMNode);
         }
       }
     } else if (newStartIndex > newEndIndex) {
-      for (; oldStartIndex < oldEndIndex; oldStartIndex++) {
+      for (; oldStartIndex <= oldEndIndex; oldStartIndex++) {
         if (oldChild[oldStartIndex]) {
           parentDOMNode.removeChild(oldChild[oldStartIndex]);
         }
@@ -119,7 +107,22 @@ function updateTextComponent(oldVnode, newVnode, parentDOMNode) {
   }
 }
 
+function updateNativeComponent(oldVnode, newVnode, parentDOMNode) {
+  let oldStyle = oldVnode.props.style||{};
+  let newStyle = newVnode.props.style||{};
+  Object.keys(newStyle).forEach((key)=>{
+    oldVnode._hostNode.style[key] = newStyle[key];
+  })
+  Object.keys(oldStyle).forEach((key)=>{
+    if(!key in newStyle){
+      oldVnode._hostNode.style[key]="";
+    } 
+  })
+  
+}
+
 export function update(oldVnode, newVnode, parentDOMNode) {
+  // console.log(oldVnode,"!@!$$!@",newVnode)
   if (!oldVnode || !newVnode) return;
   newVnode._hostNode = oldVnode._hostNode;
   let oldProps = oldVnode.props;
@@ -130,17 +133,26 @@ export function update(oldVnode, newVnode, parentDOMNode) {
       //todo 更新组件
     } else if (newVnode.type == "#text") {
       updateTextComponent(oldVnode, newVnode, parentDOMNode);
+      // console.log("updateText!!!")
     } else if (typeof newVnode.type == "string") {
       newVnode.props.children = updateChildren(
         oldProps.children,
         newProps.children,
         newVnode._hostNode
       );
-      //  mapProps(oldVnode._hostNode, newVnode.props);
+      updateNativeComponent(oldVnode,newVnode)
+      //   mapProps(oldVnode._hostNode, newVnode.props);
     }
   } else {
-    parentDOMNode.removeChild(oldVnode._hostNode);
-    render(newVnode, parentDOMNode);
+    let newDOMNode = render(newVnode, parentDOMNode,true);
+    //如果只是更新
+    if(newVnode._hostNode){
+      parentDOMNode.insertBefore(newDOMNode,oldVnode._hostNode)
+      parentDOMNode.removeChild(oldVnode._hostNode);
+    } else {
+      //若新有旧无，则直接添加
+      parentDOMNode.appendChild(newDOMNode);
+    }
   }
   return newVnode;
 }
@@ -152,7 +164,6 @@ function renderComponent(vnode, container) {
   let result = component.render();
   component.Vnode = result;
   let dom = render(result, container);
-
   return dom;
 }
 
@@ -172,7 +183,7 @@ function mountChild(children, domNode, update) {
     });
   } else {
     if (children.type == "#text") {
-      renderTextComponent(children, domNode);
+      renderTextComponent(children, domNode,update);
     } else {
       render(children, domNode, update);
     }
@@ -195,10 +206,11 @@ export function render(vnode, container, update) {
   if (children) {
     vnode.props.children = mountChild(children, domNode);
   }
-  mapProps(domNode,props)
+  mapProps(domNode, props);
   vnode._hostNode = domNode;
   if (!update) {
     container.appendChild(domNode);
   }
+  vnode._mountIndex = mountIndexAdd();
   return domNode;
 }
