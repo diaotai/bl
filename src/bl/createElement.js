@@ -23,6 +23,7 @@ export class Component {
     this.props = props;
     this.state = this.state || {};
     this.nextState = null;
+    this._renderCallback = [];
   }
   shouldComponentUpdate() {
     return true;

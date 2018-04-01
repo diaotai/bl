@@ -6,6 +6,12 @@ class FuckApp extends React.Component {
   // shouldComponentUpdate(nextProps,nextState){
   //   return false;
   // }
+  // componentWillUpdate(nextProps,nextState){
+  //   console.log("I am from update",nextState)
+  // }
+  // componentDidUpdate(nextProps,preState){
+  //   console.log("updated",preState)
+  // }
   constructor(props) {
     super(props);
     this.state = {
