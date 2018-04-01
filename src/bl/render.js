@@ -1,5 +1,5 @@
 import { testType, toArray } from "./utils";
-import { flattenChildren } from "./createElement";
+import { flattenChildren,Com } from "./createElement";
 import { mapProps } from "./mapProps";
 
 let mountIndex = 0;
@@ -156,17 +156,30 @@ export function update(oldVnode, newVnode, parentDOMNode) {
   return newVnode;
 }
 
-function renderComponent(vnode, container) {
+function mountComponent(vnode, container) {
   if (!vnode) return;
   let { type, props } = vnode;
   let component = new type(props);
+  if(component.componentWillMount){
+    component.lefeCycle = Com.MOUNTING;
+    component.componentWillMount();
+  }
   let result = component.render();
+  if(!result){
+    console.warn("你可能忘记返回JSX了");
+  }
   component.Vnode = result;
   let dom = render(result, container);
+  // component.Vnode._hostNode = dom;
+  // component.Vnode._mountIndex = mountIndexAdd();
+  component.lefeCycle = Com.MOUNT;
+  if(component.componentDidMount){
+    component.componentDidMount();
+  }
   return dom;
 }
 
-function renderTextComponent(vnode, container) {
+function mountTextComponent(vnode, container) {
   let domNode = document.createTextNode(vnode.props);
   vnode._hostNode = domNode;
   container.appendChild(domNode);
@@ -182,7 +195,7 @@ function mountChild(children, domNode, update) {
     });
   } else {
     if (children.type == "#text") {
-      renderTextComponent(children, domNode, update);
+      mountTextComponent(children, domNode, update);
     } else {
       render(children, domNode, update);
     }
@@ -196,11 +209,11 @@ export function render(vnode, container, update) {
   let { children, className, style } = props;
   let domNode;
   if (type == "#text") {
-    domNode = renderTextComponent(vnode, container);
+    domNode = mountTextComponent(vnode, container);
   } else if (typeof type == "string") {
     domNode = document.createElement(type);
   } else if (typeof type == "function") {
-    domNode = renderComponent(vnode, container);
+    domNode = mountComponent(vnode, container);
   }
   if (children) {
     vnode.props.children = mountChild(children, domNode);

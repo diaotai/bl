@@ -23,6 +23,7 @@ export class Component {
     this.props = props;
     this.state = this.state || {};
     this.nextState = null;
+    this.lefeCycle = Com.CREATE;
     this._renderCallback = [];
   }
   shouldComponentUpdate() {
@@ -54,9 +55,9 @@ export class Component {
     const preState = this.state;
     this.nextState = { ...this.state, ...nextState };
     if(this.shouldComponentUpdate){
-      console.log("I have a should")
+     // console.log("I have a should")
       if(!this.shouldComponentUpdate(this.props,this.nextState)){
-        console.log("!#$$!false")
+       // console.log("!#$$!false")
         return;
       }
     }

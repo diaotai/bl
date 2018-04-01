@@ -12,6 +12,12 @@ class FuckApp extends React.Component {
   // componentDidUpdate(nextProps,preState){
   //   console.log("updated",preState)
   // }
+  // componentWillMount(){
+  //   console.log("I will mount");
+  // }
+  // componentDidMount(){
+  //   console.log("mounted");
+  // }
   constructor(props) {
     super(props);
     this.state = {
