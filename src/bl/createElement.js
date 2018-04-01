@@ -10,13 +10,23 @@ class Vnode {
   }
 }
 
+export const Com = {
+  CREATE:0,     //创造未挂载
+  MOUNT:1,      //已挂在
+  UPDATING:2,   //正在更新
+  MOUNTING:3,   //
+  UPDATED:4
+}
+
 export class Component {
   constructor(props) {
     this.props = props;
     this.state = this.state || {};
     this.nextState = null;
   }
-  shouldComponentUpdate() {}
+  shouldComponentUpdate() {
+    return true;
+  }
   componentWillReceiveProps() {}
   componentWillUpdate() {}
   componentDidUpdate() {}
@@ -24,23 +34,40 @@ export class Component {
   componentDidMount() {}
   componentWillUnmount() {}
   componentDidUnmount() {}
+  updateComponent(instance, oldVnode, newVnode) {
+    let preState = this.state;
+    oldVnode = this.Vnode;
+    if(this.nextState!=preState){
+      this.state = this.nextState;
+    }
+    if(this.componentWillUpdate){
+      this.componentWillUpdate(this.props,this.nextState)
+    }
+    instance.Vnode = update(oldVnode, newVnode);
+    if(this.componentDidUpdate){
+      this.componentDidUpdate(this.props,preState)
+    }
+  }
 
   setState(nextState) {
     const preState = this.state;
     this.nextState = { ...this.state, ...nextState };
-    this.state = this.nextState;
+    if(this.shouldComponentUpdate){
+      console.log("I have a should")
+      if(!this.shouldComponentUpdate(this.props,this.nextState)){
+        console.log("!#$$!false")
+        return;
+      }
+    }
     let oldNode = this.Vnode;
     let newNode = this.render();
-    //     console.log("newNode",newNode)
-    updateComponent(this, oldNode, newNode);
+    this.updateComponent(this, oldNode, newNode);
+    
   }
 
   render() {}
 }
 
-function updateComponent(instance, oldVnode, newVnode) {
-  instance.Vnode = update(oldVnode, newVnode);
-}
 
 export function createElement(type, config, ...children) {
   //console.log(config,"type!!!",type)

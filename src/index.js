@@ -3,6 +3,9 @@ import  ReactDOM  from "./bl";
 import "./test.css";
 
 class FuckApp extends React.Component {
+  // shouldComponentUpdate(nextProps,nextState){
+  //   return false;
+  // }
   constructor(props) {
     super(props);
     this.state = {
