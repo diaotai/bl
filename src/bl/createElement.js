@@ -136,18 +136,26 @@ export function flattenChildren(children) {
         content = "";
       }
       if (type == 7) {
-        child.forEach(val => {
-          target.push(val);
-        });
+        target.push(child);
       } else {
         target.push(child);
       }
     }
     if (i == children.length - 1) {
-      target.push(content);
+      if(content) target.push(content);
     }
   }
-  return target.map(item => {
-    return flattenChildren(item);
+ // console.log(target)
+  let result = [];
+  target.forEach((item,index) => {
+    if(Array.isArray(item)){
+      item.forEach(item=>{
+        result.push(item)
+      })
+    } else {
+      result.push(flattenChildren(item))
+    }
+    
   });
+  return result;
 }
