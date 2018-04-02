@@ -57,13 +57,19 @@ export class Component {
     if(this.shouldComponentUpdate){
      // console.log("I have a should")
       if(!this.shouldComponentUpdate(this.props,this.nextState)){
-       // console.log("!#$$!false")
+        this.state = this.nextState;
+        this.nextState = null;
         return;
       }
     }
     let oldNode = this.Vnode;
     let newNode = this.render();
-    this.updateComponent(this, oldNode, newNode);
+    if(this.lefeCycle==Com.CREATE){
+      
+    } else {
+      this.updateComponent(this, oldNode, newNode);
+    }
+   
     
   }
 
