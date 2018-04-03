@@ -170,7 +170,7 @@ export function update(oldVnode, newVnode, parentDOMNode) {
       updateComponent(oldVnode, newVnode);
     } else if (newVnode.type == "#text") {
       updateTextComponent(oldVnode, newVnode, parentDOMNode);
-       console.log(oldVnode,"updateText!!!",newVnode)
+    //   console.log(oldVnode,"updateText!!!",newVnode)
     } else if (typeof newVnode.type == "string") {
       newVnode.props.children = updateChildren(
         oldProps.children,

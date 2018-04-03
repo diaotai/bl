@@ -38,9 +38,11 @@ export class Component {
   componentWillUnmount() {}
   componentDidUnmount() {}
 
-  updateComponent(oldVnode, newVnode) {
+  updateComponent() {
     let preState = this.state;
-    oldVnode = this.Vnode;
+    this.state = this.nextState;
+    let oldVnode = this.Vnode;
+    let newVnode = this.render();
     if (this.nextState != preState) {
       this.state = this.nextState;
     }
@@ -60,12 +62,11 @@ export class Component {
       console.log("在DidMount中调用setState")
       this.nextState = {...this.state};
       this.stateMergeQueue = [];
-      //this.updateComponent();
+      this.updateComponent();
     }
   }
 
   setState(nextState, callback) {
-    const preState = this.state;
     this.nextState = { ...this.state, ...nextState };
     if (this.shouldComponentUpdate) {
       // console.log("I have a should")
@@ -95,8 +96,7 @@ export class Component {
           options.dirtryComponent[this] = this;
         }
       } else {
-        //oldNode, newNode
-        this.updateComponent(oldNode, newNode);
+        this.updateComponent();
       }
     }
   }

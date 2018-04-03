@@ -2,6 +2,8 @@ import  React  from "./bl";
 import  ReactDOM  from "./bl";
 import "./test.css";
 
+
+let i =0;
 class FuckApp extends React.Component {
   // shouldComponentUpdate(nextProps,nextState){
   //   return false;
@@ -52,7 +54,7 @@ class FuckApp extends React.Component {
 
   render() {
     return (
-      <div className={this.state.clas} onClick={(e)=>{console.log(this.state,"state"); this.setState({text:Math.random()})}}>
+      <div className={this.state.clas} onClick={(e)=>{console.log(i,"iiiiiiii"); this.setState({text:++i})}}>
         <div
           style={{
             height: "100px",
