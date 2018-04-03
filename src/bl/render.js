@@ -205,20 +205,21 @@ function mountComponent(vnode, container) {
   if (!result) {
     console.warn("你可能忘记返回JSX了");
   }
+  
   component.Vnode = result;
   vnode._instance = component;
+  component.lefeCycle = Com.MOUNTING;
+  let dom = render(result, container);
   // component.Vnode._hostNode = dom;
   // component.Vnode._mountIndex = mountIndexAdd();
-
+  component.lefeCycle = Com.MOUNT;
   if (component.componentDidMount) {
-    component.lefeCycle = Com.MOUNTING;
     component.componentDidMount();
     component.componentDidMount = null;
-    component.lefeCycle = Com.MOUNT;
   }
 
+  
   component._updateInLifeCycle();
-  let dom = render(result, container);
   return dom;
 }
 

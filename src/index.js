@@ -17,10 +17,10 @@ class FuckApp extends React.Component {
   // componentWillMount(){
   //   console.log("I will mount");
   // }
-  // componentDidMount(){
-  //   console.log("mounted");
-  //   this.setState({text:"world666"})
-  // }
+  componentDidMount(){
+    console.log("mounted");
+    this.setState({text:"world666"})
+  }
   constructor(props) {
     super(props);
     this.state = {
@@ -53,6 +53,7 @@ class FuckApp extends React.Component {
   }
 
   render() {
+   // console.log("render!!!",this.state)
     return (
       <div className={this.state.clas} onClick={(e)=>{console.log(i,"iiiiiiii"); this.setState({text:++i})}}>
         <div

@@ -58,6 +58,7 @@ export class Component {
   }
 
   _updateInLifeCycle(){
+    console.log("我被调用",this.lefeCycle)
     if(this.stateMergeQueue.length){
       console.log("在DidMount中调用setState")
       this.nextState = {...this.state};
