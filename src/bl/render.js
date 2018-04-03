@@ -46,7 +46,7 @@ function updateChildren(oldChild, newChild, parentDOMNode) {
       update(oldStartVnode, newStartVnode, parentDOMNode);
       oldStartVnode = oldChild[++oldStartIndex];
       newStartVnode = newChild[++newStartIndex];
-    } else if (isSameVnode(OldEndVnode, newEndVnode)) {
+    } else if (isSameVnode(oldEndVnode, newEndVnode)) {
       update(OldEndVnode, newEndVnode, parentDOMNode);
       oldEndVnode = oldChild[--oldEndIndex];
       newEndVnode = newChild[--newEndIndex];
@@ -118,9 +118,11 @@ function updateNativeComponent(oldVnode, newVnode, parentDOMNode) {
       oldVnode._hostNode.style[key] = "";
     }
   });
+  updateChildren(oldVnode.children,newVnode.child,parentDOMNode)
 }
 
 function updateComponent(oldComponentVnode, newComponentVnode) {
+  console.log("updateComponent")
   let oldInstance = oldComponentVnode._instance;
   let oldState = oldInstance.state;
   let oldProps = oldInstance.props;
@@ -155,26 +157,27 @@ function updateComponent(oldComponentVnode, newComponentVnode) {
 }
 
 export function update(oldVnode, newVnode, parentDOMNode) {
-  // console.log(oldVnode,"!@!$$!@",newVnode)
+   //console.log(oldVnode,"我来自update",newVnode)
   if (!oldVnode || !newVnode) return;
   newVnode._hostNode = oldVnode._hostNode;
   let oldProps = oldVnode.props;
   let newProps = newVnode.props;
+ // console.log("update!!!!!!!!!!!!!!!!!!!")
   if (newVnode.type == oldVnode.type) {
-    //更新组件
+    //更新组件 
     if (typeof newVnode.type == "function") {
       //更新组件
       updateComponent(oldVnode, newVnode);
     } else if (newVnode.type == "#text") {
       updateTextComponent(oldVnode, newVnode, parentDOMNode);
-      // console.log("updateText!!!")
+       console.log(oldVnode,"updateText!!!",newVnode)
     } else if (typeof newVnode.type == "string") {
       newVnode.props.children = updateChildren(
         oldProps.children,
         newProps.children,
         newVnode._hostNode
       );
-      updateNativeComponent(oldVnode, newVnode);
+      updateNativeComponent(oldVnode, newVnode,parentDOMNode);
       //   mapProps(oldVnode._hostNode, newVnode.props);
     }
   } else {
@@ -204,7 +207,6 @@ function mountComponent(vnode, container) {
   }
   component.Vnode = result;
   vnode._instance = component;
-  let dom = render(result, container);
   // component.Vnode._hostNode = dom;
   // component.Vnode._mountIndex = mountIndexAdd();
 
@@ -216,6 +218,7 @@ function mountComponent(vnode, container) {
   }
 
   component._updateInLifeCycle();
+  let dom = render(result, container);
   return dom;
 }
 

@@ -44,10 +44,12 @@ export class Component {
     if (this.nextState != preState) {
       this.state = this.nextState;
     }
+    //let newVnode = this.render();
     if (this.componentWillUpdate) {
       this.componentWillUpdate(this.props, this.nextState);
     }
-    this.Vnode = update(oldVnode, newVnode);
+   // console.log(oldVnode,"$$$$$$$$$$$$$",newVnode)
+    this.Vnode = update(oldVnode, newVnode,oldVnode._hostNode);
     if (this.componentDidUpdate) {
       this.componentDidUpdate(this.props, preState);
     }
@@ -58,7 +60,7 @@ export class Component {
       console.log("在DidMount中调用setState")
       this.nextState = {...this.state};
       this.stateMergeQueue = [];
-      this.updateComponent();
+      //this.updateComponent();
     }
   }
 
@@ -75,12 +77,15 @@ export class Component {
     }
     let oldNode = this.Vnode;
     let newNode = this.render();
+    // console.log(this.props)
+   // console.log(oldNode,"setState",newNode)
     if (this.lefeCycle == Com.CREATE) {
     } else {
       //在ComponentWillMount中调用
       if (this.lefeCycle == Com.MOUNTING) {
         this.state = Object.assign({}, this.state, nextState);
         this.stateMergeQueue.push(1);
+      //  console.log("在ComponentWillMount中调用#############")
         return;
       }
       //异步调用，即在事件中调用
@@ -90,7 +95,8 @@ export class Component {
           options.dirtryComponent[this] = this;
         }
       } else {
-        this.updateComponent(this, oldNode, newNode);
+        //oldNode, newNode
+        this.updateComponent(oldNode, newNode);
       }
     }
   }

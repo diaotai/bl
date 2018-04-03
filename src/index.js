@@ -6,19 +6,19 @@ class FuckApp extends React.Component {
   // shouldComponentUpdate(nextProps,nextState){
   //   return false;
   // }
-  componentWillUpdate(nextProps,nextState){
-    console.log("I am from update",nextState)
-  }
-  componentDidUpdate(nextProps,preState){
-    console.log("updated",preState)
-  }
+  // componentWillUpdate(nextProps,nextState){
+  //   console.log("I am from update",nextState)
+  // }
+  // componentDidUpdate(nextProps,preState){
+  //   console.log("updated",preState)
+  // }
   // componentWillMount(){
   //   console.log("I will mount");
   // }
-  componentDidMount(){
-    console.log("mounted");
-    this.setState({text:"world666"})
-  }
+  // componentDidMount(){
+  //   console.log("mounted");
+  //   this.setState({text:"world666"})
+  // }
   constructor(props) {
     super(props);
     this.state = {
@@ -26,40 +26,33 @@ class FuckApp extends React.Component {
       clas:"hello",
       text:"hello"
     };
-    setInterval(
-      function() {
-        const color = [
-          "#eee",
-          "black",
-          "red",
-          "green",
-          "blue",
-          "grey",
-          "#133234",
-          "#123213",
-          "222345",
-          "998232"
-        ];
-        const rand = parseInt(Math.min(10, Math.random() * 10));
-        this.setState({
-          color: color[rand]
-        });
-      }.bind(this),
-      1000
-    );
-    setTimeout(()=>{
-        this.setState({clas:"world",text:"world"})
-    },5000)
-    setTimeout(()=>{
-      this.setState({text:"hello"})  
-      console.log("hello")
-  },10000);
+    // setInterval(
+    //   function() {
+    //     const color = [
+    //       "#eee",
+    //       "black",
+    //       "red",
+    //       "green",
+    //       "blue",
+    //       "grey",
+    //       "#133234",
+    //       "#123213",
+    //       "222345",
+    //       "998232"
+    //     ];
+    //     const rand = parseInt(Math.min(10, Math.random() * 10));
+    //     this.setState({
+    //       color: color[rand]
+    //     });
+    //   }.bind(this),
+    //   1000
+    // );
 
   }
 
   render() {
     return (
-      <div className={this.state.clas} onClick={(e)=>{console.log("hhhhhh")}}>
+      <div className={this.state.clas} onClick={(e)=>{console.log(this.state,"state"); this.setState({text:Math.random()})}}>
         <div
           style={{
             height: "100px",
@@ -68,7 +61,7 @@ class FuckApp extends React.Component {
           }}
           className="I am FuckApp component"
         >
-        {this.props.hello}
+        {this.state.text}
         </div>
       </div>
     );
