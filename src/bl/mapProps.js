@@ -1,4 +1,4 @@
-import { isEventName, isLowerEventName } from "./utils";
+import { isEventName, isLowerEventName,options } from "./utils";
 
 let mappingStrategy = {
   style: function(domNode, style) {
@@ -43,7 +43,13 @@ function getEventPath(event, end) {
 
 function dispatchEvent(event, eventName, end) {
   let path = getEventPath(event, end);
+  options.async = true;
   triggerEventByPath(e, eventName, path);
+  options.async = false;
+  for(let component in options.dirtyComponents){
+    options.dirtyComponents[component].updateComponent();
+  }
+  options.dirtyComponents = {};
 }
 
 /**

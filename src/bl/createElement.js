@@ -1,5 +1,5 @@
 import { update } from "./render";
-import { testType } from "./utils";
+import { testType, options } from "./utils";
 
 class Vnode {
   constructor(type, props, key, ref) {
@@ -11,12 +11,12 @@ class Vnode {
 }
 
 export const Com = {
-  CREATE:0,     //创造未挂载
-  MOUNT:1,      //已挂在
-  UPDATING:2,   //正在更新
-  MOUNTING:3,   //
-  UPDATED:4
-}
+  CREATE: 0, //创造未挂载
+  MOUNT: 1, //已挂在
+  UPDATING: 2, //正在更新
+  MOUNTING: 3, //
+  UPDATED: 4
+};
 
 export class Component {
   constructor(props) {
@@ -25,6 +25,7 @@ export class Component {
     this.nextState = null;
     this.lefeCycle = Com.CREATE;
     this._renderCallback = [];
+    this.stateMergeQueue = [];
   }
   shouldComponentUpdate() {
     return true;
@@ -36,27 +37,37 @@ export class Component {
   componentDidMount() {}
   componentWillUnmount() {}
   componentDidUnmount() {}
-  updateComponent(instance, oldVnode, newVnode) {
+
+  updateComponent(oldVnode, newVnode) {
     let preState = this.state;
     oldVnode = this.Vnode;
-    if(this.nextState!=preState){
+    if (this.nextState != preState) {
       this.state = this.nextState;
     }
-    if(this.componentWillUpdate){
-      this.componentWillUpdate(this.props,this.nextState)
+    if (this.componentWillUpdate) {
+      this.componentWillUpdate(this.props, this.nextState);
     }
-    instance.Vnode = update(oldVnode, newVnode);
-    if(this.componentDidUpdate){
-      this.componentDidUpdate(this.props,preState)
+    this.Vnode = update(oldVnode, newVnode);
+    if (this.componentDidUpdate) {
+      this.componentDidUpdate(this.props, preState);
     }
   }
 
-  setState(nextState) {
+  _updateInLifeCycle(){
+    if(this.stateMergeQueue.length){
+      console.log("在DidMount中调用setState")
+      this.nextState = {...this.state};
+      this.stateMergeQueue = [];
+      this.updateComponent();
+    }
+  }
+
+  setState(nextState, callback) {
     const preState = this.state;
     this.nextState = { ...this.state, ...nextState };
-    if(this.shouldComponentUpdate){
-     // console.log("I have a should")
-      if(!this.shouldComponentUpdate(this.props,this.nextState)){
+    if (this.shouldComponentUpdate) {
+      // console.log("I have a should")
+      if (!this.shouldComponentUpdate(this.props, this.nextState)) {
         this.state = this.nextState;
         this.nextState = null;
         return;
@@ -64,18 +75,28 @@ export class Component {
     }
     let oldNode = this.Vnode;
     let newNode = this.render();
-    if(this.lefeCycle==Com.CREATE){
-      
+    if (this.lefeCycle == Com.CREATE) {
     } else {
-      this.updateComponent(this, oldNode, newNode);
+      //在ComponentWillMount中调用
+      if (this.lefeCycle == Com.MOUNTING) {
+        this.state = Object.assign({}, this.state, nextState);
+        this.stateMergeQueue.push(1);
+        return;
+      }
+      //异步调用，即在事件中调用
+      if (options.async) {
+        let dirtry = options.dirtryComponent[this];
+        if(!dirtry){
+          options.dirtryComponent[this] = this;
+        }
+      } else {
+        this.updateComponent(this, oldNode, newNode);
+      }
     }
-   
-    
   }
 
   render() {}
 }
-
 
 export function createElement(type, config, ...children) {
   //console.log(config,"type!!!",type)
@@ -142,20 +163,19 @@ export function flattenChildren(children) {
       }
     }
     if (i == children.length - 1) {
-      if(content) target.push(content);
+      if (content) target.push(content);
     }
   }
- // console.log(target)
+  // console.log(target)
   let result = [];
-  target.forEach((item,index) => {
-    if(Array.isArray(item)){
-      item.forEach(item=>{
-        result.push(item)
-      })
+  target.forEach((item, index) => {
+    if (Array.isArray(item)) {
+      item.forEach(item => {
+        result.push(item);
+      });
     } else {
-      result.push(flattenChildren(item))
+      result.push(flattenChildren(item));
     }
-    
   });
   return result;
 }

@@ -196,7 +196,6 @@ function mountComponent(vnode, container) {
   let { type, props } = vnode;
   let component = new type(props);
   if (component.componentWillMount) {
-    component.lefeCycle = Com.MOUNTING;
     component.componentWillMount();
   }
   let result = component.render();
@@ -208,10 +207,15 @@ function mountComponent(vnode, container) {
   let dom = render(result, container);
   // component.Vnode._hostNode = dom;
   // component.Vnode._mountIndex = mountIndexAdd();
-  component.lefeCycle = Com.MOUNT;
+
   if (component.componentDidMount) {
+    component.lefeCycle = Com.MOUNTING;
     component.componentDidMount();
+    component.componentDidMount = null;
+    component.lefeCycle = Com.MOUNT;
   }
+
+  component._updateInLifeCycle();
   return dom;
 }
 
