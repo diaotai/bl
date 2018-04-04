@@ -91,8 +91,14 @@ function updateChildren(oldChild, newChild, parentDOMNode) {
       }
     } else if (newStartIndex > newEndIndex) {
       for (; oldStartIndex <= oldEndIndex; oldStartIndex++) {
-        if (oldChild[oldStartIndex]) {
-          parentDOMNode.removeChild(oldChild[oldStartIndex]);
+        let removeVnode = oldChild[oldStartIndex];
+        if (roremoveVnode) {
+          if(typeof removeVnode.type==="fuction"){
+            if(removeVnode.componentWillUnmount){
+              removeVnode.componentWillUnmount();
+            }
+          }
+          parentDOMNode.removeChild(removeVnode._hostNode);
         }
       }
     }
