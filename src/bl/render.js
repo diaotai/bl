@@ -37,7 +37,7 @@ function updateChildren(oldChild, newChild, parentDOMNode) {
     newEndVnode = newChild[newEndIndex],
     hasCode;
   while (oldStartIndex <= oldEndIndex && newStartIndex <= newEndIndex) {
-    // console.log("start");
+  //  // console.log("start");
     if (oldStartVnode == undefined) {
       oldStartVnode = oldChild[++oldStartIndex];
     } else if (oldEndVnode == undefined) {
