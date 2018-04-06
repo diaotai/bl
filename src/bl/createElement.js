@@ -56,6 +56,7 @@ export class Component {
       this.componentWillUpdate(this.props, this.nextState, this.context);
     }
     // console.log(oldVnode,"$$$$$$$$$$$$$",newVnode)
+   // console.log(this.context,"context!!!")
     this.Vnode = update(oldVnode, newVnode, oldVnode._hostNode, this.context);
     if (this.componentDidUpdate) {
       this.componentDidUpdate(this.props, preState, oldContext);

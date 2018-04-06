@@ -113,7 +113,7 @@ function updateTextComponent(oldVnode, newVnode, parentDOMNode) {
   }
 }
 
-function updateNativeComponent(oldVnode, newVnode, parentDOMNode) {
+function updateNativeComponent(oldVnode, newVnode, parentDOMNode,newContext) {
   let oldStyle = oldVnode.props.style || {};
   let newStyle = newVnode.props.style || {};
   Object.keys(newStyle).forEach(key => {
@@ -124,11 +124,11 @@ function updateNativeComponent(oldVnode, newVnode, parentDOMNode) {
       oldVnode._hostNode.style[key] = "";
     }
   });
-  updateChildren(oldVnode.children, newVnode.child, parentDOMNode);
+  updateChildren(oldVnode.children, newVnode.child, parentDOMNode,newContext);
 }
 
 function updateComponent(oldComponentVnode, newComponentVnode, parentContext) {
-  // console.log("updateComponent")
+  // console.log(newComponentVnode,"updateComponent",parentContext)
   let oldInstance = oldComponentVnode._instance;
   let oldState = oldInstance.state;
   let oldProps = oldInstance.props;
@@ -141,14 +141,16 @@ function updateComponent(oldComponentVnode, newComponentVnode, parentContext) {
   let newContext = newInstance.getChildContext
     ? newInstance.getChildContext()
     : parentContext;
-  let newVnode = newInstance.render();
-
+  console.log("updateComponent newContext",newContext)
+  
   if (oldInstance.componentWillReceiveProps) {
     newInstance.componentWillReceiveProps(newProps, newContext);
   }
-
   oldInstance.props = newProps;
+  oldInstance.context = newContext;
+  newInstance.context = newContext;
   newComponentVnode._instance = oldInstance;
+  
   if (oldInstance.shouldComponentUpdate) {
     let result = oldInstance.shouldComponentUpdate(
       newProps,
@@ -156,13 +158,14 @@ function updateComponent(oldComponentVnode, newComponentVnode, parentContext) {
       newContext
     );
     if (!result) {
+
       return;
     }
   }
   if (oldInstance.componentWillUpdate) {
     oldInstance.componentWillUpdate(newProps, newState, newContext);
   }
-
+  let newVnode = newInstance.render();
   update(oldVnode, newVnode, oldVnode._hostNode, newContext);
   if (oldInstance.componentDidUpdate) {
     oldInstance.componentDidUpdate(oldProps, oldState, oldContext);
@@ -192,7 +195,7 @@ export function update(oldVnode, newVnode, parentDOMNode, newContext) {
         newVnode._hostNode,
         newContext
       );
-      updateNativeComponent(oldVnode, newVnode, parentDOMNode);
+      updateNativeComponent(oldVnode, newVnode, parentDOMNode,newContext);
     }
   } else {
     let newDOMNode = render(newVnode, parentDOMNode, true, newContext);
@@ -271,7 +274,7 @@ function mountChild(children, domNode, update, parentContext) {
 
 export function render(vnode, container, update, parentContext) {
   if (!vnode) return;
-  console.log(vnode, "@@@@@@@@@@@@@", parentContext);
+  //console.log(vnode, "@@@@@@@@@@@@@", parentContext);
   let { props, type } = vnode;
   let { children, className, style } = props;
   let domNode;

@@ -12,7 +12,7 @@ let mappingStrategy = {
     let events = domNode.__events || {};
     events[eventName] = callback;
     domNode.__events = events;
-    console.log("event",eventName,"!!!")
+   // console.log("event",eventName,"!!!")
     addEvent(domNode,eventName, callback);
   },
   className: function(domNode, className) {
@@ -94,7 +94,7 @@ export function mapProps(domNode, props) {
     if (isEventName(key)) {
       let eventName = key.slice(2).toLowerCase();
       mappingStrategy.event(domNode, eventName, props[key]);
-      console.log("addEvent",eventName)
+   //   console.log("addEvent",eventName)
     } else if(typeof mappingStrategy[key]=="function"){
       mappingStrategy[key](domNode, props[key]);
     }

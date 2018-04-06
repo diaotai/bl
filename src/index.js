@@ -5,7 +5,8 @@ import "./test.css";
 let i = 0;
 class Item extends React.Component {
   render() {
-    return <div>This is context text :{this.context.contextText}</div>;
+    console.log(this.context,"Item render")
+    return <div>This is context text ---{this.context.contextText}$$$$${this.context.data}</div>;
   }
 }
 
@@ -24,13 +25,14 @@ class TestApp extends React.Component {
   // }
   getChildContext() {
     return {
-      contextText: "context!!!!"
+      contextText: "context!!!!",
+      data:this.state.text
     };
   }
-  // componentDidMount() {
-  //   console.log("mounted");
-  //   this.setState({ text: "world666" });
-  // }
+  componentDidMount() {
+    console.log("mounted");
+    this.setState({ text: "world666" });
+  }
   constructor(props) {
     super(props);
     this.state = {
