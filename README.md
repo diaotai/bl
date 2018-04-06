@@ -9,5 +9,6 @@
 - [√]  实现react事件机制
 - [√]  实现生命周期
 - [√]  实现setState异步机制
+- []   添加context机制
 - []   对接redux
 - []   添加React全部测试
