@@ -21,7 +21,7 @@ function isSameVnode(oldVnode, newVnode) {
   return oldVnode.type == newVnode.type && oldVnode.key == newVnode.key;
 }
 
-function updateChildren(oldChild, newChild, parentDOMNode) {
+function updateChildren(oldChild, newChild, parentDOMNode,parentContext) {
   newChild = flattenChildren(newChild);
   oldChild = toArray(oldChild);
   newChild = toArray(newChild);
@@ -43,23 +43,23 @@ function updateChildren(oldChild, newChild, parentDOMNode) {
     } else if (oldEndVnode == undefined) {
       oldEndVnode = oldChild[--oldEndIndex];
     } else if (isSameVnode(oldStartVnode, newStartVnode)) {
-      update(oldStartVnode, newStartVnode, parentDOMNode);
+      update(oldStartVnode, newStartVnode, parentDOMNode,parentContext);
       oldStartVnode = oldChild[++oldStartIndex];
       newStartVnode = newChild[++newStartIndex];
     } else if (isSameVnode(oldEndVnode, newEndVnode)) {
-      update(OldEndVnode, newEndVnode, parentDOMNode);
+      update(OldEndVnode, newEndVnode, parentDOMNode,parentContext);
       oldEndVnode = oldChild[--oldEndIndex];
       newEndVnode = newChild[--newEndIndex];
     } else if (isSameVnode(oldStartVnode, newEndVnode)) {
       let domNode = oldStartVnode._hostNode;
       parentDOMNode.insertBefore(domNode, oldEndVnode.nextSibling);
-      update(oldStartVnode, newEndVnode, parentDOMNode);
+      update(oldStartVnode, newEndVnode, parentDOMNode,parentContext);
       oldStartVnode = oldChild[++oldStartIndex];
       newEndVnode = newChild[--newEndIndex];
     } else if (isSameVnode(oldEndVnode, newStartVnode)) {
       let domNode = oldEndVnode._hostNode;
       parentDOMNode.insertBefore(domNode, oldStartVnode);
-      update(oldEndVnode, newStartVnode, parentDOMNode);
+      update(oldEndVnode, newStartVnode, parentDOMNode,parentContext);
       oldEndVnode = oldChild[--oldEndIndex];
       newStartVnode = newChild[++newStartIndex];
     } else {
@@ -70,7 +70,7 @@ function updateChildren(oldChild, newChild, parentDOMNode) {
       let oldVnodeIndex = hasCode[key];
       if (oldVnodeIndex !== undefined) {
         let moveVnode = oldChild[oldVnodeIndex];
-        update(moveVnode, newStartVnode, parentDOMNode);
+        update(moveVnode, newStartVnode, parentDOMNode,parentContext);
         parentDOMNode.insertBefore(
           moveVnode._hostNode,
           newStartVnode._hostNode
@@ -78,7 +78,7 @@ function updateChildren(oldChild, newChild, parentDOMNode) {
         oldChild[oldVnodeIndex] = undefined;
         newStartVnode = newChild[++newStartIndex];
       } else {
-        let newDOM = render(newStartVnode, parentDOMNode, true);
+        let newDOM = render(newStartVnode, parentDOMNode, true,parentContext);
         parentDOMNode.insertBefore(newDOM, oldStartVnode._hostNode);
         newStartVnode = newChild[++newStartIndex];
       }
@@ -86,7 +86,7 @@ function updateChildren(oldChild, newChild, parentDOMNode) {
     if (oldStartIndex > oldEndIndex) {
       for (; newStartIndex <= newEndIndex; newStartIndex++) {
         if (newChild[newStartIndex]) {
-          render(newChild[newStartIndex], parentDOMNode);
+          render(newChild[newStartIndex], parentDOMNode,false,parentContext);
         }
       }
     } else if (newStartIndex > newEndIndex) {
@@ -271,6 +271,7 @@ function mountChild(children, domNode, update, parentContext) {
 
 export function render(vnode, container, update, parentContext) {
   if (!vnode) return;
+  console.log(vnode, "@@@@@@@@@@@@@", parentContext);
   let { props, type } = vnode;
   let { children, className, style } = props;
   let domNode;
@@ -279,11 +280,11 @@ export function render(vnode, container, update, parentContext) {
   } else if (typeof type == "string") {
     domNode = document.createElement(type);
   } else if (typeof type == "function") {
-    const fixedContext = parentContext || parentContext;
+    const fixedContext = parentContext || {};
     domNode = mountComponent(vnode, container, fixedContext);
   }
   if (children) {
-    vnode.props.children = mountChild(children, domNode, parentContext);
+    vnode.props.children = mountChild(children, domNode, false, parentContext);
   }
   mapProps(domNode, props);
   vnode._hostNode = domNode;

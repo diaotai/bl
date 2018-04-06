@@ -1,10 +1,15 @@
-import  React  from "./bl";
-import  ReactDOM  from "./bl";
+import React from "./bl";
+import ReactDOM from "./bl";
 import "./test.css";
 
+let i = 0;
+class Item extends React.Component {
+  render() {
+    return <div>This is context text :{this.context.contextText}</div>;
+  }
+}
 
-let i =0;
-class FuckApp extends React.Component {
+class TestApp extends React.Component {
   // shouldComponentUpdate(nextProps,nextState){
   //   return false;
   // }
@@ -17,16 +22,21 @@ class FuckApp extends React.Component {
   // componentWillMount(){
   //   console.log("I will mount");
   // }
-  componentDidMount(){
-    console.log("mounted");
-    this.setState({text:"world666"})
+  getChildContext() {
+    return {
+      contextText: "context!!!!"
+    };
   }
+  // componentDidMount() {
+  //   console.log("mounted");
+  //   this.setState({ text: "world666" });
+  // }
   constructor(props) {
     super(props);
     this.state = {
       color: "red",
-      clas:"hello",
-      text:"hello"
+      clas: "hello",
+      text: "hello"
     };
     // setInterval(
     //   function() {
@@ -49,13 +59,18 @@ class FuckApp extends React.Component {
     //   }.bind(this),
     //   1000
     // );
-
   }
 
   render() {
-   // console.log("render!!!",this.state)
+    // console.log("render!!!",this.state)
     return (
-      <div className={this.state.clas} onClick={(e)=>{console.log(i,"iiiiiiii"); this.setState({text:++i})}}>
+      <div
+        className={this.state.clas}
+        onClick={e => {
+          console.log(i, "iiiiiiii");
+          this.setState({ text: ++i });
+        }}
+      >
         <div
           style={{
             height: "100px",
@@ -64,18 +79,20 @@ class FuckApp extends React.Component {
           }}
           className="I am FuckApp component"
         >
-        {this.state.text}
+          {this.state.text}
         </div>
+        <Item />
       </div>
     );
   }
 }
-FuckApp.defaultProps={
-  hello:"hello"
-}
+
+TestApp.defaultProps = {
+  hello: "hello"
+};
 
 let root = document.createElement("div");
 root.setAttribute("id", "root");
 document.body.appendChild(root);
 
-ReactDOM.render(<FuckApp />, document.getElementById("root"));
+ReactDOM.render(<TestApp />, document.getElementById("root"));
