@@ -16,6 +16,7 @@ export class Component {
     this.lefeCycle = Com.CREATE;
     this._renderCallback = [];
     this.stateMergeQueue = [];
+    this.refs = {};
   }
 //   shouldComponentUpdate() {
 //     return true;

@@ -1,4 +1,3 @@
-
 import { testType } from "./utils";
 
 /**
@@ -24,6 +23,11 @@ export const Com = {
   UPDATED: 4
 };
 
+const RESERVED_PROPS = {
+  ref: true,
+  key: true
+};
+
 /**
  * bl的入口函数，当一个babel遇到一个jsx，会直接调用React.createElement
  * @param {*} type  这个jsx是什么类型
@@ -40,7 +44,7 @@ export function createElement(type, config, ...children) {
     key = config.key === undefined ? null : config.key;
     ref = config.ref === undefined ? null : config.ref;
     for (let i in config) {
-      if (i == "key" || i == "ref") continue;
+      if (RESERVED_PROPS[i]) continue;
       if (config.hasOwnProperty(i)) {
         props[i] = config[i];
       }
@@ -65,7 +69,7 @@ export function createElement(type, config, ...children) {
 
 /**
  * 利用递归将所有文字节点转化为Vnode
- * @param {*} children 
+ * @param {*} children
  */
 export function flattenChildren(children) {
   if (!Array.isArray(children)) {
