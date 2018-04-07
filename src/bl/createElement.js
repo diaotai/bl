@@ -44,7 +44,7 @@ export function createElement(type, config, ...children) {
     key = config.key === undefined ? null : config.key;
     ref = config.ref === undefined ? null : config.ref;
     for (let i in config) {
-      if (RESERVED_PROPS[i]) continue;
+      if (RESERVED_PROPS.hasOwnProperty(i)) continue;
       if (config.hasOwnProperty(i)) {
         props[i] = config[i];
       }
