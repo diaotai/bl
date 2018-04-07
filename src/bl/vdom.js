@@ -6,7 +6,10 @@ let mountIndex = 0;
 function mountIndexAdd() {
   return mountIndex++;
 }
-
+/**
+ * 将数组下标index和key对应起来
+ * @param {*} oldChild 
+ */
 function createKeyToOldIdIndex(oldChild) {
   let map = {};
   oldChild.forEach((item, index) => {
@@ -124,7 +127,7 @@ function updateNativeComponent(oldVnode, newVnode, parentDOMNode,newContext) {
       oldVnode._hostNode.style[key] = "";
     }
   });
-  updateChildren(oldVnode.children, newVnode.child, parentDOMNode,newContext);
+ // updateChildren(oldVnode.children, newVnode.child, parentDOMNode,newContext);
 }
 
 function updateComponent(oldComponentVnode, newComponentVnode, parentContext) {
@@ -172,6 +175,13 @@ function updateComponent(oldComponentVnode, newComponentVnode, parentContext) {
   }
 }
 
+/**
+ * 更新函数
+ * @param {*} oldVnode 
+ * @param {*} newVnode 
+ * @param {*} parentDOMNode 
+ * @param {*} newContext 
+ */
 export function update(oldVnode, newVnode, parentDOMNode, newContext) {
   //console.log(oldVnode,"我来自update",newVnode)
   if (!oldVnode || !newVnode) return;
@@ -180,14 +190,13 @@ export function update(oldVnode, newVnode, parentDOMNode, newContext) {
   let oldContext = oldVnode.context;
   let newProps = newVnode.props;
   // console.log("update!!!!!!!!!!!!!!!!!!!")
+  //相同类型
   if (newVnode.type == oldVnode.type) {
     //更新组件
     if (typeof newVnode.type == "function") {
-      //更新组件
       updateComponent(oldVnode, newVnode, newContext);
     } else if (newVnode.type == "#text") {
       updateTextComponent(oldVnode, newVnode, parentDOMNode);
-      //   console.log(oldVnode,"updateText!!!",newVnode)
     } else if (typeof newVnode.type == "string") {
       newVnode.props.children = updateChildren(
         oldProps.children,
@@ -211,10 +220,17 @@ export function update(oldVnode, newVnode, parentDOMNode, newContext) {
   return newVnode;
 }
 
+/**
+ * 对组件进行挂载
+ * @param {*} vnode 
+ * @param {*} container 
+ * @param {*} parentContext 
+ */
 function mountComponent(vnode, container, parentContext) {
   if (!vnode) return;
   let { type, props } = vnode;
   let component = new type(props);
+  // 对组件的context进行处理
   if (component.getChildContext) {
     component.context = Object.assign(
       {},
@@ -224,6 +240,7 @@ function mountComponent(vnode, container, parentContext) {
   } else {
     component.context = parentContext;
   }
+  //处理生命周期
   if (component.componentWillMount) {
     component.componentWillMount();
   }
@@ -235,6 +252,7 @@ function mountComponent(vnode, container, parentContext) {
   component.Vnode = result;
   vnode._instance = component;
   component.lefeCycle = Com.MOUNTING;
+  //进行渲染和挂载
   let dom = render(result, container, false, component.context);
   // component.Vnode._hostNode = dom;
   // component.Vnode._mountIndex = mountIndexAdd();
@@ -243,11 +261,15 @@ function mountComponent(vnode, container, parentContext) {
     component.componentDidMount();
     component.componentDidMount = null;
   }
-
   component._updateInLifeCycle();
   return dom;
 }
 
+/**
+ * 对text节点进行处理
+ * @param {*} vnode 
+ * @param {*} container 
+ */
 function mountTextComponent(vnode, container) {
   let domNode = document.createTextNode(vnode.props);
   vnode._hostNode = domNode;
@@ -255,6 +277,13 @@ function mountTextComponent(vnode, container) {
   return domNode;
 }
 
+/**
+ * 对子元素进行挂载
+ * @param {*} children 
+ * @param {*} domNode 
+ * @param {*} update 
+ * @param {*} parentContext 
+ */
 function mountChild(children, domNode, update, parentContext) {
   children = flattenChildren(children);
 
@@ -272,12 +301,20 @@ function mountChild(children, domNode, update, parentContext) {
   return children;
 }
 
+/**
+ * 这就是传说中的render函数（准确的说是ReactDOM.render）
+ * @param {*} vnode  需要渲染的元素的vnode
+ * @param {*} container 需要挂载到的dom元素
+ * @param {*} update  是否为更新，若为更新则挂载，否则不挂载
+ * @param {*} parentContext  context部分
+ */
 export function render(vnode, container, update, parentContext) {
   if (!vnode) return;
   //console.log(vnode, "@@@@@@@@@@@@@", parentContext);
   let { props, type } = vnode;
   let { children, className, style } = props;
   let domNode;
+  // 对于不同类型的vnode进行处理
   if (type == "#text") {
     domNode = mountTextComponent(vnode, container);
   } else if (typeof type == "string") {
@@ -286,9 +323,11 @@ export function render(vnode, container, update, parentContext) {
     const fixedContext = parentContext || {};
     domNode = mountComponent(vnode, container, fixedContext);
   }
+  //对子元素进行处理
   if (children) {
     vnode.props.children = mountChild(children, domNode, false, parentContext);
   }
+  // 将vnode上的属性挂载到真正的DOM节点上
   mapProps(domNode, props);
   vnode._hostNode = domNode;
   vnode._mountIndex = mountIndexAdd();

@@ -63,7 +63,10 @@ export function createElement(type, config, ...children) {
   return new Vnode(type, props, key, ref);
 }
 
-//利用递归将所有文字节点转化为Vnode
+/**
+ * 利用递归将所有文字节点转化为Vnode
+ * @param {*} children 
+ */
 export function flattenChildren(children) {
   if (!Array.isArray(children)) {
     if (children === undefined) {

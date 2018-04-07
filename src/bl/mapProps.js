@@ -1,5 +1,8 @@
-import { isEventName, isLowerEventName,options } from "./utils";
+import { isEventName, isLowerEventName, options } from "./utils";
 
+/**
+ * 对于不同类型的属性进行处理
+ */
 let mappingStrategy = {
   style: function(domNode, style) {
     if (style) {
@@ -12,8 +15,8 @@ let mappingStrategy = {
     let events = domNode.__events || {};
     events[eventName] = callback;
     domNode.__events = events;
-   // console.log("event",eventName,"!!!")
-    addEvent(domNode,eventName, callback);
+    // console.log("event",eventName,"!!!")
+    addEvent(domNode, eventName, callback);
   },
   className: function(domNode, className) {
     if (className) {
@@ -41,12 +44,18 @@ function getEventPath(event, end) {
   return path;
 }
 
+/**
+ * 引入异步机制，对setState在事件中调用进行处理
+ * @param {*} event
+ * @param {*} eventName
+ * @param {*} end
+ */
 function dispatchEvent(event, eventName, end) {
   let path = getEventPath(event, end);
   options.async = true;
   triggerEventByPath(e, eventName, path);
   options.async = false;
-  for(let component in options.dirtyComponents){
+  for (let component in options.dirtyComponents) {
     options.dirtyComponents[component].updateComponent();
   }
   options.dirtyComponents = {};
@@ -94,8 +103,8 @@ export function mapProps(domNode, props) {
     if (isEventName(key)) {
       let eventName = key.slice(2).toLowerCase();
       mappingStrategy.event(domNode, eventName, props[key]);
-   //   console.log("addEvent",eventName)
-    } else if(typeof mappingStrategy[key]=="function"){
+      //   console.log("addEvent",eventName)
+    } else if (typeof mappingStrategy[key] == "function") {
       mappingStrategy[key](domNode, props[key]);
     }
   }
