@@ -1,6 +1,9 @@
 
 import { testType } from "./utils";
 
+/**
+ * vdom的最基本单位
+ */
 class Vnode {
   constructor(type, props, key, ref) {
     this.type = type;
@@ -10,6 +13,9 @@ class Vnode {
   }
 }
 
+/**
+ * 一个组件的不同生命状态
+ */
 export const Com = {
   CREATE: 0, //创造未挂载
   MOUNT: 1, //已挂在
@@ -18,8 +24,12 @@ export const Com = {
   UPDATED: 4
 };
 
-
-
+/**
+ * bl的入口函数，当一个babel遇到一个jsx，会直接调用React.createElement
+ * @param {*} type  这个jsx是什么类型
+ * @param {*} config 包括除children的所有属性
+ * @param {*} children 子元素
+ */
 export function createElement(type, config, ...children) {
   //console.log(config,"type!!!",type)
   if (!type) return;
