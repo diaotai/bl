@@ -5,8 +5,14 @@ import "./test.css";
 let i = 0;
 class Item extends React.Component {
   render() {
-    console.log(this.context,"Item render")
-    return <div>This is context text ---{this.context.contextText}$$$$${this.context.data}</div>;
+    // console.log(this.context,"Item render")
+    return (
+      <div>
+        This is context text ---{this.context.contextText}$$$$${
+          this.context.data
+        }
+      </div>
+    );
   }
 }
 
@@ -26,12 +32,12 @@ class TestApp extends React.Component {
   getChildContext() {
     return {
       contextText: "context!!!!",
-      data:this.state.text
+      data: this.state.text
     };
   }
   componentDidMount() {
-    console.log("mounted");
-    this.setState({ text: "world666" });
+       console.log("mounted",this.refs);
+   //this.setState({ text: "world666" });
   }
   constructor(props) {
     super(props);
@@ -68,12 +74,15 @@ class TestApp extends React.Component {
     return (
       <div
         className={this.state.clas}
+        ref = {(dom)=>{console.log(dom)}}
         onClick={e => {
           console.log(i, "iiiiiiii");
           this.setState({ text: ++i });
+          console.log(this.refs)
         }}
       >
         <div
+         ref="hello"
           style={{
             height: "100px",
             width: "100px",

@@ -144,7 +144,7 @@ function updateComponent(oldComponentVnode, newComponentVnode, parentContext) {
   let newContext = newInstance.getChildContext
     ? newInstance.getChildContext()
     : parentContext;
-  console.log("updateComponent newContext", newContext);
+  //console.log("updateComponent newContext", newContext);
 
   if (oldInstance.componentWillReceiveProps) {
     newInstance.componentWillReceiveProps(newProps, newContext);
@@ -252,7 +252,7 @@ function mountComponent(vnode, container, parentContext) {
   vnode._instance = component;
   component.lefeCycle = Com.MOUNTING;
   //进行渲染和挂载
-  let dom = render(result, container, false, component.context);
+  let dom = render(result, container, false, component.context, component);
   // component.Vnode._hostNode = dom;
   // component.Vnode._mountIndex = mountIndexAdd();
   component.lefeCycle = Com.MOUNT;

@@ -64,6 +64,7 @@ export function createElement(type, config, ...children) {
       }
     });
   }
+  // console.log(ref)
   return new Vnode(type, props, key, ref);
 }
 
