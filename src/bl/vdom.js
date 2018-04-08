@@ -160,8 +160,12 @@ function updateEventListeners(domNode, oldEventListeners, newEventListeners) {
       let oldListener = oldEventListeners[eventName];
       let newListener = newEventListeners[eventName];
       if (!oldListener === newListener) {
-        removeEvent(domNode, eventName, oldListener);
-        addEvent(domNode, eventName, newListener);
+        if (oldListener) {
+          removeEvent(domNode, eventName, oldListener);
+        }
+        if (newListener) {
+          addEvent(domNode, eventName, newListener);
+        }
       }
     }
   }
