@@ -115,6 +115,24 @@ function updateTextComponent(oldVnode, newVnode, parentDOMNode) {
     parentDOMNode.firstChild.nodeValue = newVnode.props;
   }
 }
+function updateAttributes(domNode, oldAttributes, newAttributes) {
+  if (oldAttributes) {
+    for (let attribute in oldAttributes) {
+      if (!(newAttributes && attribute in newAttributes)) {
+        domNode.removeAttribute(attribute);
+      }
+    }
+  }
+  if (newAttributes) {
+    for (let attribute in newAttributes) {
+      let oldValue = oldAttribute[attribute];
+      let newValue = newAttribute[attribute];
+      if (oldValue !== newValue) {
+        domNode.setAttribute(attribute, newValue);
+      }
+    }
+  }
+}
 
 function updateNativeComponent(oldVnode, newVnode, parentDOMNode, newContext) {
   let oldStyle = oldVnode.props.style || {};
