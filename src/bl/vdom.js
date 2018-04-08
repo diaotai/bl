@@ -133,6 +133,18 @@ function updateAttributes(domNode, oldAttributes, newAttributes) {
     }
   }
 }
+function updateRefs(domNode, oldRefName, newRefName, refs) {
+  if (typeof oldRefName == "function") {
+    oldrefName(null);
+  } else if (oldRefName && refs[oldRefName] == domNode) {
+    delete refs[oldRefName];
+  }
+  if (typeof newRefName == "function") {
+    newrefName(domNode);
+  } else if (newRefName) {
+    refs[newRefName] = domNode;
+  }
+}
 
 function updateNativeComponent(oldVnode, newVnode, parentDOMNode, newContext) {
   let oldStyle = oldVnode.props.style || {};
