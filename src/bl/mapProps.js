@@ -84,11 +84,19 @@ function triggerEventByPath(e, eventName, path) {
  * @param {*} eventName
  * @param {*} callback
  */
-function addEvent(domNode, eventName, callback) {
+export function addEvent(domNode, eventName, callback) {
   if (domNode.addEventListener) {
     domNode.addEventListener(eventName, callback, false);
   } else if (domNode.attachEvent) {
     domNode.attachEvent("on" + eventName, callback);
+  }
+}
+
+export function removeEvent(domNode,eventName,callback){
+  if(domNode.removeEventListener){
+    domNode.removeEventListener(eventName,callback);
+  } else if(domNode.detachEvent){
+    domNode.detachEvent("on"+eventName,callback);
   }
 }
 

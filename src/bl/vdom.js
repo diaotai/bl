@@ -1,6 +1,6 @@
 import { testType, toArray } from "./utils";
 import { flattenChildren, Com } from "./createElement";
-import { mapProps } from "./mapProps";
+import { mapProps, addEvent, removeEvent } from "./mapProps";
 
 let mountIndex = 0;
 function mountIndexAdd() {
@@ -143,6 +143,27 @@ function updateRefs(domNode, oldRefName, newRefName, refs) {
     newrefName(domNode);
   } else if (newRefName) {
     refs[newRefName] = domNode;
+  }
+}
+
+function updateEventListeners(domNode, oldEventListeners, newEventListeners) {
+  if (!domNode) return;
+  if (oldEventListeners) {
+    for (let eventName in oldEventListeners) {
+      if (!(newEventListeners && newEventListeners[eventName])) {
+        removeEvent(domNode, eventName, oldEventListeners[eventName]);
+      }
+    }
+  }
+  if (newEventListeners) {
+    for (let eventName in newEventListeners) {
+      let oldListener = oldEventListeners[eventName];
+      let newListener = newEventListeners[eventName];
+      if (!oldListener === newListener) {
+        removeEvent(domNode, eventName, oldListener);
+        addEvent(domNode, eventName, newListener);
+      }
+    }
   }
 }
 
